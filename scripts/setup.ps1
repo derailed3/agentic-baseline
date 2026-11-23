@@ -1,6 +1,7 @@
 # One-step machine setup for Windows. Safe to run again.
 #   powershell -ExecutionPolicy Bypass -File scripts/setup.ps1
-# Makes .venv with the Python packages, writes the per-tool skill copies, and runs every check.
+# Makes .venv with the Python packages, writes the skill mirrors, installs the skill guard (repository-local
+# git hooks that keep the mirrors current), and runs every check.
 # Installs nothing system-wide; if Python 3.10+ is missing it prints the command that installs it.
 $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path -Parent $PSScriptRoot)
@@ -31,6 +32,7 @@ $venvPy = Join-Path (Get-Location) '.venv\Scripts\python.exe'
 & $venvPy -m pip install -q -r requirements.txt
 
 & $venvPy scripts/deploy_skills.py
+& $venvPy scripts/skill_guard.py install
 Write-Host ""
 & $venvPy scripts/verify.py
 $status = $LASTEXITCODE

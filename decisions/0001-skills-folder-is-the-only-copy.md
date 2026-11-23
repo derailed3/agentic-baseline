@@ -1,6 +1,6 @@
 # 0001: skills/ is the only copy of each skill
 
-- Status: Accepted (2026-11-22)
+- Status: Superseded by 0006 (2026-11-23)
 - Affects: `skills/`, `scripts/deploy_skills.py`, `registry/skill-targets.txt`, `.gitignore`
 
 ## Context

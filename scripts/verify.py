@@ -44,7 +44,7 @@ def check_line_endings() -> tuple[bool, str]:
 
 def main() -> int:
     checks = [
-        ("skill validator", lambda: run([PY, "skills/meta-skills-govern/scripts/validate_skills.py"])),
+        ("skill validator", lambda: run([PY, ".agents/skills/meta-skills-govern/scripts/validate_skills.py"])),
         ("tests and trigger cases", lambda: run([PY, "scripts/run_tests.py"])),
         ("top-level layout", check_layout),
         ("line endings", check_line_endings),
@@ -52,7 +52,7 @@ def main() -> int:
         ("generated skill copies", lambda: run([PY, "scripts/deploy_skills.py", "--check"])),
     ]
     optional = [
-        ("secret scan (gitleaks)", "gitleaks", ["gitleaks", "dir", ".", "--no-banner", "--redact"]),
+        ("secret scan (gitleaks)", "gitleaks", ["gitleaks", "dir", "{entry}", "--no-banner", "--redact"]),
         ("workflow lint (actionlint)", "actionlint", ["actionlint"]),
     ]
     failed = 0
@@ -61,10 +61,27 @@ def main() -> int:
         failed += not ok
         print(f"{'PASS' if ok else 'FAIL':7} {name}: {detail}")
     for name, tool, args in optional:
-        if not shutil.which(tool):
+        # Helper binaries may live in the main checkout's git-ignored .data/tools (shared by every worktree).
+        common = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        local_tools = (Path(common).parent if common else ROOT) / ".data" / "tools"
+        found = shutil.which(tool) or shutil.which(tool, path=str(local_tools))
+        if found:
+            args = [found] + args[1:]
+        if not found:
             print(f"SKIPPED {name}: {tool} not installed (CI runs it)")
             continue
-        ok, detail = run(args)
+        if "{entry}" in args:
+            # Scan only what git would track: every top-level entry of the tracked and not-ignored files,
+            # so git-ignored local folders (.venv, .data) never produce findings.
+            entries = sorted({f.split("/", 1)[0] for f in tracked() if (ROOT / f.split("/", 1)[0]).exists()})
+            ok, detail = True, f"{len(entries)} top-level entries scanned, no leaks"
+            for entry in entries:
+                one_ok, one = run([a.replace("{entry}", entry) for a in args])
+                if not one_ok:
+                    ok, detail = False, f"{entry}: {one}"
+                    break
+        else:
+            ok, detail = run(args)
         failed += not ok
         print(f"{'PASS' if ok else 'FAIL':7} {name}: {detail}")
     print("\nverify: " + ("all checks passed" if not failed else f"{failed} check(s) failed"))

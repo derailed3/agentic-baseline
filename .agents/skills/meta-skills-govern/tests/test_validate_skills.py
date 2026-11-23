@@ -30,13 +30,13 @@ version: 1.0.0
 
 def make_repo(tmp: Path, guide: str = GOOD_GUIDE, changelog: str = "## [1.0.0] - 2026-01-01\n", index: bool = True,
               name: str = "notes-items-list") -> Path:
-    skill = tmp / "skills" / name
+    skill = tmp / ".agents" / "skills" / name
     (skill / "workflows").mkdir(parents=True)
     (skill / "SKILL.md").write_text(guide, encoding="utf-8", newline="\n")
     (skill / "README.md").write_text("Lists items.\n", encoding="utf-8", newline="\n")
     (skill / "CHANGELOG.md").write_text(changelog, encoding="utf-8", newline="\n")
     (skill / "workflows" / "list.md").write_text("# List\n", encoding="utf-8", newline="\n")
-    (tmp / "skills" / "README.md").write_text(f"| `{name}` | lists |\n" if index else "# Skills\n", encoding="utf-8")
+    (tmp / ".agents" / "skills" / "README.md").write_text(f"| `{name}` | lists |\n" if index else "# Skills\n", encoding="utf-8")
     return skill
 
 
@@ -90,7 +90,7 @@ class ValidatorTest(unittest.TestCase):
             self.assertIn("R14", rules(vs.validate(Path(d))))
 
     def test_this_repository_passes(self):
-        self.assertEqual(vs.validate(HERE.parents[2]).fails, [])
+        self.assertEqual(vs.validate(HERE.parents[3]).fails, [])
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@
 Whether the change comes from a person or an agent, it follows the same path.
 
 1. **Start a task worktree.** `python scripts/task_worktree.py start <type>/<slug>` (types: feature, fix, docs, skill, chore, batch). Work only in the folder it prints. Never commit to `main`.
-2. **Change skills through the meta-skill.** `skills/meta-skills-govern/SKILL.md` routes create, update, review and retire. Edit only `skills/`; every skill change bumps its `version` and adds a `CHANGELOG.md` section; add trigger cases to `tests/trigger_cases.yaml` for the requests a skill must win.
+2. **Change skills through the meta-skill.** `.agents/skills/meta-skills-govern/SKILL.md` routes create, update, review and retire. Edit only `.agents/skills/`; every skill change bumps its `version` and adds a `CHANGELOG.md` section; add trigger cases to `tests/trigger_cases.yaml` for the requests a skill must win.
 3. **Verify.** `python scripts/verify.py` runs what the server runs. Fix every FAIL; a SKIPPED check runs in CI.
 4. **Open a pull request.** Write the description in a file (the template in `.github/pull_request_template.md` lists what to include), then `python scripts/task_worktree.py pr --title "..." --body-file <file>` to preview and add `--apply` to push and open it.
 5. **Merge when the checks pass.** Merging is the person's decision; an agent merges only when told "land it" for that change, and never approves or votes.

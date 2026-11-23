@@ -12,7 +12,7 @@ _spec.loader.exec_module(fs)
 
 
 def write_skill(root: Path, name: str, description: str, keywords: list[str]) -> None:
-    folder = root / "skills" / name
+    folder = root / ".agents" / "skills" / name
     folder.mkdir(parents=True)
     meta = yaml.safe_dump({"name": name, "description": description, "version": "1.0.0", "keywords": keywords})
     (folder / "SKILL.md").write_text("---\n" + meta + "---\n", encoding="utf-8")

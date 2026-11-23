@@ -1,6 +1,6 @@
 # Repository contract
 
-This is the canonical instruction file for every agent working in this repository. Per-tool files (`CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`) are pointers to it: edit this file, not the pointers. Procedure for one kind of task belongs in a skill under `skills/`, so it loads only when relevant.
+This is the canonical instruction file for every agent working in this repository. Per-tool files (`CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`) are pointers to it: edit this file, not the pointers. Procedure for one kind of task belongs in a skill under `.agents/skills/`, so it loads only when relevant.
 
 ## Start here
 
@@ -8,16 +8,17 @@ This is the canonical instruction file for every agent working in this repositor
 |---|---|
 | What this repository is for | `README.md` |
 | First session on a machine | `sh scripts/setup.sh` (macOS, Linux, cloud) or `powershell -ExecutionPolicy Bypass -File scripts/setup.ps1` (Windows) |
-| Which skill fits a task | `python skills/meta-skills-govern/scripts/find_skill.py "<task>"` |
-| How to create, change, review or retire a skill | `skills/meta-skills-govern/SKILL.md` |
+| Which skill fits a task | `python .agents/skills/meta-skills-govern/scripts/find_skill.py "<task>"` |
+| How to create, change, review or retire a skill | `.agents/skills/meta-skills-govern/SKILL.md` |
 | Why something is the way it is | `decisions/` |
 
 ## Layout and ownership
 
 | Path | Holds |
 |---|---|
-| `skills/` | Hand-written skills, the only copy you edit. `skills/README.md` indexes them |
-| `.claude/skills/`, `.agents/skills/` | Ignored, generated copies written by `scripts/deploy_skills.py` for tools that scan only their own folder |
+| `.agents/skills/` | Hand-written skills, the only copy you edit. `.agents/skills/README.md` indexes them |
+| `.claude/skills/` | Ignored mirror of `.agents/skills/` for a tool that scans only its own folder; written by `scripts/deploy_skills.py`, kept current by the skill guard (`registry/skill-host.yaml` -> `mirrors`) |
+| `.data/` | Ignored: everything the repository downloads or produces (models, samples, run output, scratch, helper tools). Nothing is written outside the repository |
 | `scripts/` | Repository automation: setup, the worktree helper, deploy, verify, scans, branch protection |
 | `tests/` | Tests for repository scripts, and trigger cases (`tests/trigger_cases.yaml`) |
 | `registry/` | Project-specific settings that skills and scripts refer to by key |
@@ -28,7 +29,7 @@ This is the canonical instruction file for every agent working in this repositor
 ## Non-negotiable rules
 
 1. Work in a task worktree. Run `python scripts/task_worktree.py start <type>/<slug>` before the first write to any file in this repository, and work only inside the folder it prints. Only pure reads, and outside-system actions that touch no repository file, are exempt. Never commit to `main`.
-2. Edit only `skills/`, never a generated copy. Skills are self-contained: never reach into another skill's folder or above your own. Every skill change bumps its version and adds a changelog section. Create and change skills through `skills/meta-skills-govern/`.
+2. Edit only `.agents/skills/`, never a generated copy. Skills are self-contained: never reach into another skill's folder or above your own. Every skill change bumps its version and adds a changelog section. Create and change skills through `.agents/skills/meta-skills-govern/`.
 3. Write to outside systems only through a script made for that system that previews by default. Get explicit approval before any outside, irreversible or ambiguous write.
 4. Never commit personal data, credentials, tokens or secrets. CI scans every change; a secret that reached history must be rotated, not just deleted.
 5. Back every claim with a check, a test or a stated limitation. Say plainly when a check could not run.
@@ -37,9 +38,10 @@ This is the canonical instruction file for every agent working in this repositor
 ## Commands
 
     python scripts/verify.py                                   # everything the server checks, run locally
-    python skills/meta-skills-govern/scripts/validate_skills.py   # the validator alone
+    python .agents/skills/meta-skills-govern/scripts/validate_skills.py   # the validator alone
     python scripts/run_tests.py                                # all tests (every tests/ folder)
-    python scripts/deploy_skills.py                            # copy skills to each tool (after any skill change)
+    python scripts/deploy_skills.py                            # rewrite the skill mirrors (the guard does this on every checkout, merge, commit)
+    python scripts/skill_guard.py install|status               # the repository-local git hooks that keep mirrors current and check skills before commit
     python scripts/task_worktree.py start|status|pr|finish|check|list ...
 
 ## Approval

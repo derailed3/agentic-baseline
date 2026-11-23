@@ -1,0 +1,16 @@
+# What this repository tells its skill tooling about itself, in the shape ai-knowledge's skill-manage reads.
+# Read by scripts/deploy_skills.py (mirrors) and documented in registry/README.md.
+
+# The ref a change is compared against by checks that look at what changed.
+base_branch: origin/main
+
+# Generated copies of .agents/skills/ for agent tools that scan only their own folder. Each must also be
+# in .gitignore. Tools that read .agents/skills/ themselves (Codex, GitHub Copilot CLI) need no entry.
+# Measure a new tool with a probe skill (docs/everyday-use.md -> Adding an agent tool) before adding it.
+mirrors:
+  - path: .claude/skills
+    reads: Claude Code (scans only this folder)
+
+# The git-ignored folder, inside the repository, that holds everything the repository downloads or
+# produces (models, samples, run output, scratch, helper binaries). Nothing is written outside the repo.
+work_folder: .data

@@ -1,6 +1,6 @@
 """Rank existing skills against a request, to find the right one or spot an overlap.
 
-Usage: python skills/meta-skills-govern/scripts/find_skill.py "<request>" [--top N] [--root <repo>]
+Usage: python .agents/skills/meta-skills-govern/scripts/find_skill.py "<request>" [--top N] [--root <repo>]
 Reads every skill's frontmatter fresh (no stored index to go stale) and scores it: a matched
 "rx:" keyword pattern counts most, then a keyword phrase found in the request, then a word of
 the skill's own name, then a single keyword word, then a tag, then a description word. Prints the top skills with what matched.
@@ -14,7 +14,7 @@ from pathlib import Path
 
 import yaml
 
-DEFAULT_ROOT = Path(__file__).resolve().parents[3]
+DEFAULT_ROOT = Path(__file__).resolve().parents[4]
 WEIGHTS = {"pattern": 8.0, "phrase": 5.0, "name": 3.0, "word": 2.0, "tag": 1.5, "description": 0.5}
 STOP = {"a", "an", "the", "and", "or", "of", "to", "for", "in", "on", "my", "me", "i", "it", "is", "this",
         "that", "with", "from", "use", "when", "what", "how", "do", "make", "please", "can", "you", "be"}
@@ -26,7 +26,7 @@ def words(text: str) -> set[str]:
 
 def load(root: Path) -> list[dict]:
     out = []
-    for guide in sorted((root / "skills").glob("*/SKILL.md")):
+    for guide in sorted((root / ".agents" / "skills").glob("*/SKILL.md")):
         m = re.match(r"^---\r?\n(.*?)\r?\n---", guide.read_text(encoding="utf-8"), re.S)
         if not m:
             continue
@@ -88,7 +88,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     ranked = rank(args.root, args.request)
     if not ranked:
-        print("No skill matches. If this is a recurring task, create one (skills/meta-skills-govern/workflows/create.md).")
+        print("No skill matches. If this is a recurring task, create one (.agents/skills/meta-skills-govern/workflows/create.md).")
         return 0
     for s, name, why in ranked[: args.top]:
         print(f"{s:5.1f}  {name}  ({'; '.join(why)})")

@@ -1,7 +1,7 @@
-# Task worktrees and generated per-tool skill copies (scripts/deploy_skills.py)
+# Task worktrees, and skill mirrors generated from .agents/skills/ (the tracked source) by
+# scripts/deploy_skills.py through the skill guard (registry/skill-host.yaml -> mirrors)
 /.worktrees/
 /.claude/skills/
-/.agents/skills/
 # Python
 __pycache__/
 *.py[cod]
@@ -15,3 +15,6 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Everything the repository downloads or produces (models, samples, run output, scratch, tools): never committed
+/.data/

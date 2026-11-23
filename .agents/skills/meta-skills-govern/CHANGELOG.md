@@ -2,6 +2,11 @@
 
 Notable changes to this skill, newest first. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.2.1] - 2026-11-23
+
+### Changed
+- Skills live in `.agents/skills/` (the tracked source); paths in this skill and its tests follow. The mirrors are kept current by `scripts/skill_guard.py`.
+
 ## [0.2.0] - 2026-11-22
 
 ### Changed

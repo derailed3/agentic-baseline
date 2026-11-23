@@ -1,5 +1,0 @@
-# Where each agent tool looks for skills, one folder per line, relative to the repository root.
-# scripts/deploy_skills.py copies skills/ to each; every folder here must also be in .gitignore.
-# Measure a new tool with a probe skill (docs/everyday-use.md -> Adding an agent tool) before adding it.
-.claude/skills
-.agents/skills
