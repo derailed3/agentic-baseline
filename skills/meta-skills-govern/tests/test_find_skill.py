@@ -27,6 +27,15 @@ class FindSkillTest(unittest.TestCase):
             self.assertEqual(fs.rank(root, "what are the action items in my meeting notes")[0][1], "notes-actions-extract")
             self.assertEqual(fs.rank(root, "which tickets are blocked")[0][1], "tickets-report-draft")
 
+    def test_words_of_the_skill_name_count(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            write_skill(root, "media-shot-detect", "Find edit points.", [])
+            write_skill(root, "media-speech-transcribe", "Words with times.", [])
+            ranked = fs.rank(root, "detect every shot in this video")
+            self.assertEqual(ranked[0][1], "media-shot-detect")
+            self.assertTrue(any(w.startswith("name:") for w in ranked[0][2]))
+
     def test_no_match_is_empty(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
