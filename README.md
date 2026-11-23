@@ -37,3 +37,7 @@ The server check is required: GitHub refuses to merge a pull request until every
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). In short: start a task worktree, change only `skills/` (never a generated copy), bump the skill's version and changelog, run `python scripts/verify.py`, and open a pull request.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
