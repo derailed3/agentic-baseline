@@ -1,6 +1,6 @@
 """Check every skill against the rules a machine can decide.
 
-Usage: python skills/meta-skills-govern/scripts/validate_skills.py [--root <repo>]
+Usage: python .agents/skills/meta-skills-govern/scripts/validate_skills.py [--root <repo>]
 Prints one line per broken rule ("FAIL <skill>: R<n> <why>") and per warning, then a summary.
 Exit 0 when nothing fails (warnings allowed), 1 otherwise. The rules and their ids are listed in
 this skill's reference/conventions.md; add a rule each time the same mistake is caught twice.
@@ -14,7 +14,7 @@ from pathlib import Path
 import yaml
 
 HERE = Path(__file__).resolve()
-DEFAULT_ROOT = HERE.parents[3]
+DEFAULT_ROOT = HERE.parents[4]
 REQUIRED_FILES = ("README.md", "SKILL.md", "CHANGELOG.md")
 NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+){1,2}$")
 SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+$")
@@ -134,7 +134,7 @@ def check_skill(folder: Path, all_names: set[str], r: Report) -> None:
 
 def validate(root: Path) -> Report:
     r = Report()
-    skills_dir = root / "skills"
+    skills_dir = root / ".agents" / "skills"
     folders = sorted(p for p in skills_dir.iterdir() if p.is_dir() and not p.name.startswith((".", "_")))
     names = {p.name for p in folders}
     if not folders:
@@ -143,12 +143,12 @@ def validate(root: Path) -> Report:
         check_skill(folder, names, r)
     index = skills_dir / "README.md"  # R13
     if not index.is_file():
-        r.fail("skills", "R13", "skills/README.md (the index) is missing")
+        r.fail("skills", "R13", ".agents/skills/README.md (the index) is missing")
     else:
         listed = index.read_text(encoding="utf-8")
         for n in sorted(names):
             if f"`{n}`" not in listed:
-                r.fail(n, "R13", "not listed in skills/README.md (add a row to the index)")
+                r.fail(n, "R13", "not listed in .agents/skills/README.md (add a row to the index)")
     return r
 
 
@@ -159,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
     r = validate(args.root.resolve())
     for line in r.fails + r.warns:
         print(line)
-    count = len([p for p in (args.root / "skills").iterdir() if p.is_dir()]) if (args.root / "skills").is_dir() else 0
+    count = len([p for p in (args.root / ".agents" / "skills").iterdir() if p.is_dir()]) if (args.root / ".agents" / "skills").is_dir() else 0
     print(f"\n{count} skill(s): " + ("PASS" if not r.fails else f"{len(r.fails)} failure(s)") + (f", {len(r.warns)} warning(s)" if r.warns else ""))
     return 1 if r.fails else 0
 

@@ -43,10 +43,10 @@ Every agent finishes with a receipt. Check five things:
 
 - One task per session where you can; long sessions blur the agent's memory.
 - When an agent repeats a mistake, ask it to add the lesson to the skill's Error Handling table (through `meta-skills-govern`), or to propose a validator rule.
-- Never edit `.claude/skills/` or `.agents/skills/`; they are regenerated from `skills/`.
+- Never edit `.claude/skills/`; it is a mirror the skill guard rewrites from `.agents/skills/` on every checkout, merge and commit.
 
 ## Adding an agent tool
 
 1. Find the file name the tool reads for instructions and add a one-line pointer file under that name: *"Read and follow `AGENTS.md` at the repository root; it is the canonical instruction file. Edit that file, not this one."* Add it to `registry/layout.txt` if it sits at the root.
 2. Find where it looks for skills with a probe: make a throwaway skill with a unique name in a candidate folder, start a new session, and ask the agent which skills it can see.
-3. If it does not read an existing copy folder, add its folder to `registry/skill-targets.txt` and `.gitignore`, run `python scripts/deploy_skills.py`, and confirm the probe again.
+3. If it does not read an existing copy folder, add its folder under `mirrors:` in `registry/skill-host.yaml` and to `.gitignore`, run `python scripts/deploy_skills.py`, and confirm the probe again. From then on the skill guard keeps it current.

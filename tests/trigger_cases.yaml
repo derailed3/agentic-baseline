@@ -1,4 +1,4 @@
-# Requests that must rank a skill first with skills/meta-skills-govern/scripts/find_skill.py.
+# Requests that must rank a skill first with .agents/skills/meta-skills-govern/scripts/find_skill.py.
 # Add two or more cases for every new or changed skill (meta-skills-govern -> create, update).
 cases:
   - request: make a skill that drafts my weekly status report

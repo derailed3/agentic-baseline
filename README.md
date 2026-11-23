@@ -22,10 +22,10 @@ Agents are fast and confident but forgetful. The structure here supplies the mem
 | Piece | Where | What it does |
 |---|---|---|
 | The instruction file | `AGENTS.md` (pointers: `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`) | The rules every agent reads first: where to work, what never to do, how to finish |
-| Skills | `skills/` | One folder per recurring task: a guide for the agent, a page for people, a changelog, scripts and tests. Agents read a skill only when a request matches it |
-| The meta-skill | `skills/meta-skills-govern/` | Creates, changes, reviews and retires skills, and finds which one fits a task. Holds the validator |
+| Skills | `.agents/skills/` | One folder per recurring task: a guide for the agent, a page for people, a changelog, scripts and tests. Agents read a skill only when a request matches it |
+| The meta-skill | `.agents/skills/meta-skills-govern/` | Creates, changes, reviews and retires skills, and finds which one fits a task. Holds the validator |
 | Task worktrees | `scripts/task_worktree.py` | Every change happens in its own folder and branch under `.worktrees/`, so two agents never edit the same checkout. `finish` cleans up only after GitHub confirms the merge |
-| Deploy step | `scripts/deploy_skills.py` | Copies `skills/` to the folders tools scan (`.claude/skills`, `.agents/skills`); the copies are generated and never committed |
+| Deploy step | `scripts/deploy_skills.py`, `scripts/skill_guard.py` | `.agents/skills/` is the tracked source; tools that scan only their own folder get a generated mirror (`.claude/skills`), rewritten by repository-local git hooks after every checkout, merge, commit and rebase, and skills are validated before each commit |
 | Checks | `scripts/verify.py` locally; `.github/workflows/checks.yml` on every pull request | Validator, tests, trigger cases, layout, line endings, personal-data and secret scans, workflow lint. Branch protection makes them required |
 | Registry | `registry/` | Project-specific settings (owner, branch, tool folders), so skills stay generic |
 | Decisions | `decisions/` | Why the repository works the way it does; binding until replaced |
@@ -36,7 +36,7 @@ The server check is required: GitHub refuses to merge a pull request until every
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). In short: start a task worktree, change only `skills/` (never a generated copy), bump the skill's version and changelog, run `python scripts/verify.py`, and open a pull request.
+See [CONTRIBUTING.md](CONTRIBUTING.md). In short: start a task worktree, change only `.agents/skills/` (never a generated copy), bump the skill's version and changelog, run `python scripts/verify.py`, and open a pull request.
 
 ## License
 

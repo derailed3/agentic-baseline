@@ -10,6 +10,8 @@ _spec = importlib.util.spec_from_file_location(
 ds = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(ds)
 
+HOST = "# comment\nbase_branch: origin/main\nmirrors:\n  - path: .tool/skills\n    reads: a tool\n\nwork_folder: .data\n"
+
 
 def quiet(fn, *args):
     with redirect_stdout(io.StringIO()) as out:
@@ -21,10 +23,11 @@ class DeployTest(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name)
-        (self.root / "skills" / "a-b").mkdir(parents=True)
-        (self.root / "skills" / "a-b" / "SKILL.md").write_text("one\n", encoding="utf-8")
+        self.src = self.root / ".agents" / "skills"
+        (self.src / "a-b").mkdir(parents=True)
+        (self.src / "a-b" / "SKILL.md").write_text("one\n", encoding="utf-8")
         (self.root / "registry").mkdir()
-        (self.root / "registry" / "skill-targets.txt").write_text("# comment\n.tool/skills\n", encoding="utf-8")
+        (self.root / "registry" / "skill-host.yaml").write_text(HOST, encoding="utf-8")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -36,12 +39,26 @@ class DeployTest(unittest.TestCase):
         quiet(ds.main, [], self.root)
         self.assertTrue((self.root / ".tool" / "skills" / "a-b" / "SKILL.md").is_file())
         self.assertEqual(quiet(ds.main, ["--check"], self.root)[0], 0)
-        (self.root / "skills" / "a-b" / "SKILL.md").write_text("two\n", encoding="utf-8")
+        (self.src / "a-b" / "SKILL.md").write_text("two\n", encoding="utf-8")
         code, out = quiet(ds.main, ["--check"], self.root)
         self.assertEqual(code, 1)
         self.assertIn("stale", out)
         quiet(ds.main, [], self.root)
         self.assertEqual(quiet(ds.main, ["--check"], self.root)[0], 0)
+
+    def test_mirrors_read_from_host_file(self):
+        self.assertEqual([(t.relative_to(self.root).as_posix(), r) for t, r in ds.mirrors(self.root)], [(".tool/skills", "a tool")])
+        self.assertIn(".tool/skills", quiet(ds.main, ["--targets"], self.root)[1])
+
+    def test_deleted_skill_leaves_the_mirror(self):
+        (self.src / "c-d").mkdir()
+        (self.src / "c-d" / "SKILL.md").write_text("x\n", encoding="utf-8")
+        quiet(ds.main, [], self.root)
+        self.assertTrue((self.root / ".tool" / "skills" / "c-d").is_dir())
+        (self.src / "c-d" / "SKILL.md").unlink()
+        (self.src / "c-d").rmdir()
+        quiet(ds.main, [], self.root)
+        self.assertFalse((self.root / ".tool" / "skills" / "c-d").exists())
 
     def test_refuses_to_replace_a_folder_it_did_not_make(self):
         (self.root / ".tool" / "skills").mkdir(parents=True)

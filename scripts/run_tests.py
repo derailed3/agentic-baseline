@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def test_dirs() -> list[Path]:
-    dirs = sorted(p for p in (ROOT / "skills").glob("*/tests") if p.is_dir())
+    dirs = sorted(p for p in (ROOT / ".agents" / "skills").glob("*/tests") if p.is_dir())
     if (ROOT / "tests").is_dir():
         dirs.append(ROOT / "tests")
     return dirs

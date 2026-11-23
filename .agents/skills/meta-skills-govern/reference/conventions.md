@@ -5,7 +5,7 @@ What every skill in this repository looks like, and the rules the validator enfo
 ## Layout
 
 ```text
-skills/<skill-name>/
+.agents/skills/<skill-name>/
 |-- README.md        required: the guide for people
 |-- SKILL.md         required: the main guide for the agent, with frontmatter
 |-- CHANGELOG.md     required: one section per version, newest first
@@ -71,7 +71,7 @@ Title and one-line purpose; **When to Use** (and when not); **Routing** (intent 
 | R10 | Every workflow SKILL.md names exists, and every file in `workflows/` is named |
 | R11 | No file reaches into another skill's folder or climbs out of its own (a parent-folder step) |
 | R12 | No file contains an absolute path |
-| R13 | Every skill is listed in `skills/README.md` |
+| R13 | Every skill is listed in `.agents/skills/README.md` |
 | R14 | No run-evidence folders (`evidence`, `rounds`, `runs`, `scratch`) outside test fixtures |
 | R15 | Text files use LF line endings |
 | R16 | `SKILL.md` is at most 500 lines (a warning above 150) |

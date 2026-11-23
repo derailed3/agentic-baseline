@@ -6,7 +6,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
-_spec = importlib.util.spec_from_file_location("find_skill", ROOT / "skills" / "meta-skills-govern" / "scripts" / "find_skill.py")
+_spec = importlib.util.spec_from_file_location("find_skill", ROOT / ".agents" / "skills" / "meta-skills-govern" / "scripts" / "find_skill.py")
 fs = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(fs)
 CASES = yaml.safe_load((ROOT / "tests" / "trigger_cases.yaml").read_text(encoding="utf-8"))["cases"]
@@ -21,7 +21,7 @@ class TriggerCases(unittest.TestCase):
                 self.assertEqual(ranked[0][1], case["expect"], f"ranking: {[(round(s, 1), n) for s, n, _ in ranked[:3]]}")
 
     def test_every_skill_has_at_least_two_cases(self):
-        skills = {p.name for p in (ROOT / "skills").iterdir() if p.is_dir()}
+        skills = {p.name for p in (ROOT / ".agents" / "skills").iterdir() if p.is_dir()}
         counts = {s: sum(1 for c in CASES if c["expect"] == s) for s in skills}
         self.assertEqual({s: n for s, n in counts.items() if n < 2}, {})
 

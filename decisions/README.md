@@ -6,8 +6,9 @@ Each record states its status, the context, the decision, its consequences, and 
 
 | Id | Decision | Status |
 |---|---|---|
-| [0001](0001-skills-folder-is-the-only-copy.md) | `skills/` is the only copy of each skill; per-tool copies are generated | Accepted |
+| [0001](0001-skills-folder-is-the-only-copy.md) | `skills/` is the only copy of each skill; per-tool copies are generated | Superseded by 0006 |
 | [0002](0002-work-happens-in-a-task-worktree.md) | Every change happens in its own task worktree and branch | Accepted |
 | [0003](0003-two-check-tiers-on-day-one.md) | Day one runs two check tiers: the agent's own and the required server check | Accepted |
 | [0004](0004-approval-is-the-person-merging.md) | Approval is the person merging; no required vote, agents never vote | Accepted |
 | [0005](0005-secrets-and-personal-data-are-scanned-on-the-server.md) | Secrets and personal data are scanned as a required server check | Accepted |
+| [0006](0006-agents-skills-is-the-source-and-a-guard-keeps-mirrors.md) | `.agents/skills/` is the source; a repository-local guard keeps the generated mirrors current | Accepted |

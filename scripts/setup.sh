@@ -1,7 +1,8 @@
 #!/bin/sh
 # One-step machine setup for macOS, Linux and cloud workspaces. Safe to run again.
 #   sh scripts/setup.sh
-# Makes .venv with the Python packages, writes the per-tool skill copies, and runs every check.
+# Makes .venv with the Python packages, writes the skill mirrors, installs the skill guard (repository-local
+# git hooks that keep the mirrors current), and runs every check.
 # Installs nothing system-wide; when Python 3.10+ or its venv module is missing, it uses uv,
 # which installs into your home folder without admin rights.
 set -eu
@@ -37,6 +38,7 @@ else
 fi
 
 python scripts/deploy_skills.py
+python scripts/skill_guard.py install
 echo
 python scripts/verify.py
 echo

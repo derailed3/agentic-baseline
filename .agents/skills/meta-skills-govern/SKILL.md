@@ -4,7 +4,7 @@ description: >-
   Create, update, review or retire a skill in this repository, or find which skill fits a task.
   Use for "make a skill for...", "change the X skill", "review this skill", "retire a skill",
   "which skill should I use", or when a skill fails validation.
-version: 0.2.0
+version: 0.2.1
 distribution: repository
 generality: general
 tags:
@@ -52,7 +52,7 @@ Every route that changes files starts in a task worktree (`AGENTS.md` rule 1) an
 
 Run from the worktree root after any skill change, and report each result:
 
-    python skills/meta-skills-govern/scripts/validate_skills.py
+    python .agents/skills/meta-skills-govern/scripts/validate_skills.py
     python scripts/run_tests.py
     python scripts/deploy_skills.py
 
@@ -67,6 +67,6 @@ A receipt (`AGENTS.md` -> Finishing a task): the skill and its new version, the 
 | `R4` name does not equal the folder name | Renamed one but not the other | Make them equal; a rename is a retire plus a create (`workflows/retire.md`) |
 | `R8` changelog version differs | Bumped `version` without a changelog section, or the reverse | Add the `## [X.Y.Z] - YYYY-MM-DD` section, newest first |
 | `R10` workflow not named in routing | Added a workflow file without a routing row | Add the row, or delete the file |
-| `R13` not listed in the index | New skill missing from `skills/README.md` | Add its row |
+| `R13` not listed in the index | New skill missing from `.agents/skills/README.md` | Add its row |
 | An agent cannot see a new skill | Copies not refreshed, or the tool cached its list | Run `scripts/deploy_skills.py`, then start a new session |
 | Two skills both match a request | Overlapping descriptions | Narrow one description, or merge (`workflows/review.md`) |

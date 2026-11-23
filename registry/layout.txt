@@ -1,5 +1,6 @@
 # The declared top-level entries of the repository. scripts/verify.py fails on anything else, so adding
 # a top-level file or folder is a deliberate change: add it here and to AGENTS.md in the same pull request.
+.agents
 .editorconfig
 .gitattributes
 .github
@@ -16,5 +17,4 @@ docs
 registry
 requirements.txt
 scripts
-skills
 tests
