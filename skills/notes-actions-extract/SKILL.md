@@ -4,7 +4,7 @@ description: >-
   Pull the action items out of a meeting notes file and list them as a
   checklist. Use for "what are the action items", "list the TODOs from
   these notes", or "turn my notes into a checklist".
-version: 1.0.0
+version: x
 distribution: portable
 generality: general
 tags:
