@@ -1,0 +1,17 @@
+# Task worktrees and generated per-tool skill copies (scripts/deploy_skills.py)
+/.worktrees/
+/.claude/skills/
+/.agents/skills/
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+# Disposable output and local state
+/output/
+.claude/settings.local.json
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

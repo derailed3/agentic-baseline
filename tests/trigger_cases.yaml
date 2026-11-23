@@ -1,0 +1,13 @@
+# Requests that must rank a skill first with skills/meta-skills-govern/scripts/find_skill.py.
+# Add two or more cases for every new or changed skill (meta-skills-govern -> create, update).
+cases:
+  - request: make a skill that drafts my weekly status report
+    expect: meta-skills-govern
+  - request: which skill should I use for this
+    expect: meta-skills-govern
+  - request: review the notes skill and fix what is wrong
+    expect: meta-skills-govern
+  - request: what are the action items in these meeting notes
+    expect: notes-actions-extract
+  - request: turn my notes into a checklist of todos
+    expect: notes-actions-extract

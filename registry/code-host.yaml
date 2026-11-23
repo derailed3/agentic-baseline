@@ -1,0 +1,8 @@
+# The code host this repository lives on. Read by scripts/task_worktree.py and scripts/github_protect.py.
+host: github
+owner: derailed3
+repo: agentic-baseline
+shared_branch: main
+# The gh account to act as. gh may hold several accounts; the scripts use this one's token
+# (gh auth token -u <account>) without changing the active account. Leave empty to use the active one.
+gh_account: derailed3

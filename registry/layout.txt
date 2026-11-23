@@ -1,0 +1,20 @@
+# The declared top-level entries of the repository. scripts/verify.py fails on anything else, so adding
+# a top-level file or folder is a deliberate change: add it here and to AGENTS.md in the same pull request.
+.editorconfig
+.gitattributes
+.github
+.gitignore
+.gitleaks.toml
+AGENTS.md
+CLAUDE.md
+CONTRIBUTING.md
+GEMINI.md
+LICENSE
+README.md
+decisions
+docs
+registry
+requirements.txt
+scripts
+skills
+tests

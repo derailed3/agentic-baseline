@@ -1,0 +1,3 @@
+# gitleaks configuration: the default rules, plus this repository's allowances (none yet).
+[extend]
+useDefault = true
