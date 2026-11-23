@@ -5,14 +5,17 @@
 $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path -Parent $PSScriptRoot)
 
-$py = $null
-foreach ($c in @('py', 'python', 'python3')) {
+# Find Python 3.10+ and ask it for its own full path. Arguments are written literally: splatting an
+# array holding '-3' turns it into '-' '3' in Windows PowerShell, and 'py -' then waits on stdin forever.
+$probe = "import sys; print(sys.executable if sys.version_info >= (3, 10) else '')"
+$exe = $null
+foreach ($c in @('python', 'python3', 'py')) {
     if (-not (Get-Command $c -ErrorAction SilentlyContinue)) { continue }
-    $extra = if ($c -eq 'py') { @('-3') } else { @() }
-    & $c @extra -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" 2>$null
-    if ($LASTEXITCODE -eq 0) { $py = @($c) + $extra; break }
+    # The Microsoft Store 'python' alias writes to stderr; under 'Stop' that would end the script, so probe in try.
+    try { $out = if ($c -eq 'py') { & py -3 -c $probe 2>$null } else { & $c -c $probe 2>$null } } catch { continue }
+    if ($LASTEXITCODE -eq 0 -and $out -and (Test-Path ($out | Select-Object -Last 1))) { $exe = ($out | Select-Object -Last 1); break }
 }
-if (-not $py) {
+if (-not $exe) {
     Write-Host "Python 3.10 or newer was not found. Install it with:"
     Write-Host "  winget install -e --id Python.Python.3.12"
     Write-Host "then open a new terminal and run this script again."
@@ -20,8 +23,8 @@ if (-not $py) {
 }
 
 if (-not (Test-Path .venv\Scripts\python.exe)) {
-    & $py[0] @($py | Select-Object -Skip 1) -m venv .venv
-    Write-Host "created .venv"
+    & $exe -m venv .venv
+    Write-Host "created .venv with $exe"
 }
 $venvPy = Join-Path (Get-Location) '.venv\Scripts\python.exe'
 & $venvPy -m pip install -q --upgrade pip
