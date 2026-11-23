@@ -49,6 +49,18 @@ class WorktreeTest(unittest.TestCase):
         with self.assertRaises(tw.Refused):
             tw.cmd_start(self.repo, "skill/notes-tidy")
 
+    def test_new_task_is_not_reported_as_pushed(self):
+        tw.cmd_start(self.repo, "docs/fresh")
+        folder = self.clone / ".worktrees" / "docs-fresh"
+        self.repo.prs = lambda branch, state: []
+        os.chdir(folder)
+        self.assertIn("state: no commits yet", tw.cmd_status(self.repo, None))
+        (folder / "a.txt").write_text("a\n", encoding="utf-8")
+        git(folder, "add", "a.txt")
+        git(folder, "commit", "-qm", "a")
+        self.assertIn("1 commit(s), not pushed", tw.cmd_status(self.repo, None))
+        os.chdir(self.clone)
+
     def test_start_rejects_bad_names(self):
         for bad in ("notes", "misc/notes", "skill/Notes", "skill/notes_tidy"):
             with self.assertRaises(tw.Refused):

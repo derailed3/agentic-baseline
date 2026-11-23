@@ -121,7 +121,8 @@ def cmd_start(repo: Repo, branch: str) -> str:
         raise Refused(f"branch {branch} already exists on origin")
     if repo.git("rev-parse", "--abbrev-ref", "HEAD") == repo.shared and not repo.dirty(repo.root):
         repo.git("merge", "--ff-only", f"origin/{repo.shared}", check=False)
-    repo.git("worktree", "add", "-b", branch, str(folder), f"origin/{repo.shared}")
+    # --no-track: the new branch must not adopt origin/<shared> as its upstream, or it would look pushed.
+    repo.git("worktree", "add", "--no-track", "-b", branch, str(folder), f"origin/{repo.shared}")
     return f"started {branch}\nwork in: {folder}"
 
 
@@ -131,7 +132,7 @@ def cmd_status(repo: Repo, slug: str | None) -> str:
     if repo.dirty(path):
         lines.append("state: uncommitted changes")
     upstream = repo.git("rev-parse", "--abbrev-ref", "@{upstream}", cwd=path, check=False)
-    if "fatal" in upstream or not upstream or upstream == "@{upstream}":
+    if not upstream or upstream == "@{upstream}" or upstream == f"origin/{repo.shared}":
         n = repo.ahead(path, f"origin/{repo.shared}")
         lines.append(f"state: {n} commit(s), not pushed" if n else "state: no commits yet")
     else:
