@@ -2,8 +2,8 @@
 
 Usage: python skills/meta-skills-govern/scripts/find_skill.py "<request>" [--top N] [--root <repo>]
 Reads every skill's frontmatter fresh (no stored index to go stale) and scores it: a matched
-"rx:" keyword pattern counts most, then a keyword phrase found in the request, then a single
-keyword word, then a tag, then a description word. Prints the top skills with what matched.
+"rx:" keyword pattern counts most, then a keyword phrase found in the request, then a word of
+the skill's own name, then a single keyword word, then a tag, then a description word. Prints the top skills with what matched.
 When the top two scores are close, the request sits between two skills: read both before
 creating a third. Needs PyYAML.
 """
@@ -15,7 +15,7 @@ from pathlib import Path
 import yaml
 
 DEFAULT_ROOT = Path(__file__).resolve().parents[3]
-WEIGHTS = {"pattern": 8.0, "phrase": 5.0, "word": 2.0, "tag": 1.5, "description": 0.5}
+WEIGHTS = {"pattern": 8.0, "phrase": 5.0, "name": 3.0, "word": 2.0, "tag": 1.5, "description": 0.5}
 STOP = {"a", "an", "the", "and", "or", "of", "to", "for", "in", "on", "my", "me", "i", "it", "is", "this",
         "that", "with", "from", "use", "when", "what", "how", "do", "make", "please", "can", "you", "be"}
 
@@ -59,6 +59,10 @@ def score(meta: dict, request: str) -> tuple[float, list[str]]:
             if hit:
                 total += WEIGHTS["word"] * len(hit)
                 why.append(f"keyword {kw!r}")
+    named = words(str(meta.get("name", "")).replace("-", " ")) & req_words
+    if named:
+        total += WEIGHTS["name"] * len(named)
+        why.append("name: " + ", ".join(sorted(named)))
     for tag in meta.get("tags") or []:
         value = str(tag).split(":", 1)[-1]
         if words(value) & req_words:

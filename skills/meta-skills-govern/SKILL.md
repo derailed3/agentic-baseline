@@ -4,7 +4,7 @@ description: >-
   Create, update, review or retire a skill in this repository, or find which skill fits a task.
   Use for "make a skill for...", "change the X skill", "review this skill", "retire a skill",
   "which skill should I use", or when a skill fails validation.
-version: 0.1.0
+version: 0.2.0
 distribution: repository
 generality: general
 tags:
